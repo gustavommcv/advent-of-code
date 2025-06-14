@@ -8,14 +8,19 @@ import (
 	"strings"
 )
 
+const LEFT_PARENTHESIS string = "("
+const RIGHT_PARENTHESIS string = ")"
+
 func main() {
 	relativePath, err := filepath.Abs("input.txt")
 	checkError(err)
 
 	input := scanFile(relativePath)
-	integer := WhatFloor(input)
+	floor := GetFloor(input)
+	position := GetPosition(input)
 
-	fmt.Println(integer)
+	fmt.Println("Floor: ", floor)
+	fmt.Println("Position: ", position)
 }
 
 func scanFile(filePath string) []byte {
@@ -25,10 +30,34 @@ func scanFile(filePath string) []byte {
 	return input
 }
 
-func WhatFloor(input []byte) int {
-	const LEFT_PARENTHESIS string = "("
-	const RIGHT_PARENTHESIS string = ")"
+func GetPosition(input []byte) int {
+	scanner := bufio.NewScanner(strings.NewReader(string(input)))
+	scanner.Split(bufio.ScanRunes)
 
+	position := 0
+	floor := 0
+	for scanner.Scan() {
+		if scanner.Text() == LEFT_PARENTHESIS || scanner.Text() == RIGHT_PARENTHESIS {
+			position++
+		}
+
+		if scanner.Text() == LEFT_PARENTHESIS {
+			floor++
+		}
+
+		if scanner.Text() == RIGHT_PARENTHESIS {
+			floor--
+		}
+
+		if floor == -1 {
+			break
+		}
+	}
+
+	return position
+}
+
+func GetFloor(input []byte) int {
 	scanner := bufio.NewScanner(strings.NewReader(string(input)))
 	scanner.Split(bufio.ScanRunes)
 
