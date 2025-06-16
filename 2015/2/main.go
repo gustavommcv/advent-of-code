@@ -10,94 +10,100 @@ import (
 )
 
 func main() {
-	relativePath, err := filepath.Abs("input.txt")
+	absolutePath, err := filepath.Abs("input.txt")
 	checkError(err)
-	input := scanFile(relativePath)
+	inputData := scanFile(absolutePath)
 
-	presents := ParsePresents(input)
-	presentWrapers := GetPresentWrapers(presents)
+	presents := parsePresents(inputData)
+	presentWrappers := getPresentWrappers(presents)
 
-	fmt.Println(GetTotalSquareFeet(presentWrapers))
+	fmt.Println(getTotalSquareFeet(presentWrappers))
 }
 
 type Present struct {
-	lenght int
+	length int
 	width  int
 	height int
 }
 
-type PresentWrap struct {
-	lenght     int
+type PresentWrapper struct {
+	length     int
 	width      int
-	heigth     int
+	height     int
 	squareFeet int
 }
 
-func (p *PresentWrap) GetExtraPaper() int {
-	s1 := p.lenght * p.width
-	s2 := p.lenght * p.heigth
-	s3 := p.width * p.heigth
+func (pw *PresentWrapper) getExtraPaper() int {
+	side1 := pw.length * pw.width
+	side2 := pw.length * pw.height
+	side3 := pw.width * pw.height
 
-	return min(s1, s2, s3)
+	return min(side1, side2, side3)
 }
 
 func scanFile(filePath string) []byte {
-	input, err := os.ReadFile(filePath)
+	fileContent, err := os.ReadFile(filePath)
 	checkError(err)
 
-	return input
+	return fileContent
 }
 
-func ParsePresents(input []byte) []Present {
-	scanner := bufio.NewScanner(strings.NewReader(string(input)))
+func parsePresents(inputData []byte) []Present {
+	scanner := bufio.NewScanner(strings.NewReader(string(inputData)))
 
-	presents := []Present{}
+	var presents []Present
 	for scanner.Scan() {
-		input := strings.Split(scanner.Text(), "x")
+		dimensions := strings.Split(scanner.Text(), "x")
 
-		lenght, err := strconv.Atoi(input[0])
+		length, err := strconv.Atoi(dimensions[0])
 		checkError(err)
 
-		width, err := strconv.Atoi(input[1])
+		width, err := strconv.Atoi(dimensions[1])
 		checkError(err)
 
-		height, err := strconv.Atoi(input[2])
+		height, err := strconv.Atoi(dimensions[2])
 		checkError(err)
 
-		presents = append(presents, Present{lenght: lenght, width: width, height: height})
+		presents = append(presents, Present{length: length, width: width, height: height})
 	}
 
 	return presents
 }
 
-func GetPresentWraper(present Present) PresentWrap {
-	presentWrap := PresentWrap{lenght: present.lenght, width: present.width, heigth: present.height}
-	presentWrap.squareFeet = 2*present.lenght*present.width + 2*present.width*present.height + 2*present.height*present.lenght
+func getPresentWrapper(present Present) PresentWrapper {
+	presentWrapper := PresentWrapper{
+		length: present.length,
+		width:  present.width,
+		height: present.height,
+	}
+	presentWrapper.squareFeet = 2*present.length*present.width +
+		2*present.width*present.height +
+		2*present.height*present.length
 
-	return presentWrap
+	return presentWrapper
 }
 
-func GetPresentWrapers(presents []Present) []PresentWrap {
-	presentWrapers := []PresentWrap{}
+func getPresentWrappers(presents []Present) []PresentWrapper {
+	var presentWrappers []PresentWrapper
 	for _, present := range presents {
-		presentWrapers = append(presentWrapers, GetPresentWraper(present))
+		presentWrappers = append(presentWrappers, getPresentWrapper(present))
 	}
 
-	return presentWrapers
+	return presentWrappers
 }
 
-func GetTotalSquareFeet(presentWrapers []PresentWrap) int {
-	total := 0
+func getTotalSquareFeet(presentWrappers []PresentWrapper) int {
+	totalSquareFeet := 0
 
-	for _, presentWrap := range presentWrapers {
-		total += presentWrap.squareFeet + presentWrap.GetExtraPaper()
+	for _, wrapper := range presentWrappers {
+		totalSquareFeet += wrapper.squareFeet + wrapper.getExtraPaper()
 	}
 
-	return total
+	return totalSquareFeet
 }
 
-func checkError(e error) {
-	if e != nil {
-		panic(e)
+func checkError(err error) {
+	if err != nil {
+		panic(err)
 	}
 }
