@@ -15,9 +15,8 @@ func main() {
 	inputData := scanFile(absolutePath)
 
 	presents := parsePresents(inputData)
-	presentWrappers := getPresentWrappers(presents)
 
-	fmt.Println(getTotalSquareFeet(presentWrappers))
+	fmt.Println(getTotalFeetOfRibbon(presents))
 }
 
 type Present struct {
@@ -100,6 +99,46 @@ func getTotalSquareFeet(presentWrappers []PresentWrapper) int {
 	}
 
 	return totalSquareFeet
+}
+
+func getWrapRibbon(present Present) int {
+	a, b := twoSmallest(present.length, present.width, present.height)
+
+	return 2 * (a + b)
+}
+
+func twoSmallest(a, b, c int) (int, int) {
+	if a > b {
+		a, b = b, a
+	}
+
+	if b > c {
+		b, c = c, b
+	}
+
+	if a > b {
+		a, b = b, a
+	}
+
+	return a, b
+}
+
+func getWrapBow(present Present) int {
+	return present.height * present.width * present.length
+}
+
+func getTotalRibbon(present Present) int {
+	return getWrapRibbon(present) + getWrapBow(present)
+}
+
+func getTotalFeetOfRibbon(presents []Present) int {
+	total := 0
+
+	for _, present := range presents {
+		total += getTotalRibbon(present)
+	}
+
+	return total
 }
 
 func checkError(err error) {

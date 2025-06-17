@@ -88,6 +88,108 @@ func TestGetExtraPaper(t *testing.T) {
 	}
 }
 
+func TestGetWrapRibbon(t *testing.T) {
+	tests := []struct {
+		name     string
+		present  Present
+		expected int
+	}{
+		{
+			name: "should return 10 for 2x3x4 present",
+			present: Present{
+				length: 2,
+				width:  3,
+				height: 4,
+			},
+			expected: 10,
+		},
+		{
+			name: "should return 4 for 1x1x10 present",
+			present: Present{
+				length: 1,
+				width:  1,
+				height: 10,
+			},
+			expected: 4,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := getWrapRibbon(tt.present)
+			assertEqual(t, tt.expected, got)
+		})
+	}
+}
+
+func TestGetWrapBow(t *testing.T) {
+	tests := []struct {
+		name     string
+		present  Present
+		expected int
+	}{
+		{
+			name: "should return 24 for 2x3x4 present",
+			present: Present{
+				length: 2,
+				width:  3,
+				height: 4,
+			},
+			expected: 24,
+		},
+		{
+			name: "should return 10 for 1x1x10 present",
+			present: Present{
+				length: 1,
+				width:  1,
+				height: 10,
+			},
+			expected: 10,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := getWrapBow(tt.present)
+			assertEqual(t, tt.expected, got)
+		})
+	}
+}
+
+func TestGetTotalRibbon(t *testing.T) {
+	tests := []struct {
+		name     string
+		present  Present
+		expected int
+	}{
+		{
+			name: "should return 34 for 2x3x4 present",
+			present: Present{
+				length: 2,
+				width:  3,
+				height: 4,
+			},
+			expected: 34,
+		},
+		{
+			name: "should return 14 for 1x1x10 present",
+			present: Present{
+				length: 1,
+				width:  10,
+				height: 1,
+			},
+			expected: 14,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := getTotalRibbon(tt.present)
+			assertEqual(t, tt.expected, got)
+		})
+	}
+}
+
 func assertPresentWrapper(t testing.TB, expected, got PresentWrapper) {
 	t.Helper()
 
