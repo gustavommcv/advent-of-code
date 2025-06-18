@@ -12,32 +12,20 @@ func main() {
 	fmt.Println(mine([]byte("abcdef")))
 	fmt.Println(mine([]byte("pqrstuv")))
 	fmt.Println(mine([]byte("yzbqklnj")))
-	fmt.Println(minePart2([]byte("yzbqklnj")))
+	fmt.Println(mineWithPrefix([]byte("yzbqklnj"), "000000"))
 }
 
 func mine(input []byte) (string, int) {
-	i := 1
-	found := false
-	result := ""
-	for !found {
-		result = hash(fmt.Appendf(nil, "%s%d", input, i))
-		if strings.HasPrefix(result, "00000") {
-			found = true
-			break
-		}
-		i++
-	}
-
-	return result, i
+	return mineWithPrefix(input, "00000")
 }
 
-func minePart2(input []byte) (string, int) {
+func mineWithPrefix(input []byte, prefix string) (string, int) {
 	i := 1
 	found := false
 	result := ""
 	for !found {
 		result = hash(fmt.Appendf(nil, "%s%d", input, i))
-		if strings.HasPrefix(result, "000000") {
+		if strings.HasPrefix(result, prefix) {
 			found = true
 			break
 		}
