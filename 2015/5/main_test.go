@@ -43,6 +43,42 @@ func TestIsNice(t *testing.T) {
 	}
 }
 
+func TestIsNice2(t *testing.T) {
+	tests := []struct {
+		name     string
+		input    string
+		expected bool
+	}{
+		{
+			name:     "should return true for 'qjhvhtzxzqqjkmpb' input",
+			input:    "qjhvhtzxzqqjkmpb",
+			expected: true,
+		},
+		{
+			name:     "should return true for 'xxyxx' input",
+			input:    "xxyxx",
+			expected: true,
+		},
+		{
+			name:     "should return false for 'uurcxstgmygtbstg' input",
+			input:    "uurcxstgmygtbstg",
+			expected: false,
+		},
+		{
+			name:     "should return false for 'ieodomkazucvgmuy' input",
+			input:    "ieodomkazucvgmuy",
+			expected: false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := isNice(tt.input)
+			assertEqualBool(t, tt.expected, got)
+		})
+	}
+}
+
 func assertEqualBool(t testing.TB, want, got bool) {
 	t.Helper()
 
