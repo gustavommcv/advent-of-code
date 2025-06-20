@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"path/filepath"
 	"strings"
 )
 
@@ -11,15 +12,30 @@ var forbiddenStrings [4]string = [...]string{"ab", "cd", "pq", "xy"}
 var vowels [5]string = [...]string{"a", "e", "i", "o", "u"}
 
 func main() {
-	// absolutePath, err := filepath.Abs("input.txt")
-	// checkError(err)
-	// inputData := scanFile(absolutePath)
+	absolutePath, err := filepath.Abs("input.txt")
+	checkError(err)
+	inputData := scanFile(absolutePath)
 
 	// fmt.Println(getNiceStrings(string(inputData)))
-	fmt.Println(isNice2("xyxy"))
+	fmt.Println(getNiceStrings2(string(inputData)))
+	// fmt.Println(isNice2("xyxy"))
 	// fmt.Println(isNice2("aaabcdefgaa"))
 	// fmt.Println(isNice2("uurcxstgmygtbstg"))
 	// fmt.Println(isNice2("ieodomkazucvgmuy"))
+}
+
+func getNiceStrings2(input string) int {
+	scanner := bufio.NewScanner(strings.NewReader(input))
+	scanner.Split(bufio.ScanLines)
+
+	count := 0
+	for scanner.Scan() {
+		if isNice2(scanner.Text()) {
+			count++
+		}
+	}
+
+	return count
 }
 
 func getNiceStrings(input string) int {
@@ -92,32 +108,30 @@ func containsPair(str string) bool {
 }
 
 func isNice2(str string) bool {
-	// Should contain a pair of any two letters that appears at least twice in the string
-	// without overlapping
-	// xyxy, aabcdefgaa
-	fmt.Println("Has two pairs: ", containsPairWithoutOverlapping(str))
-
-	// Should contain at least one letter which repeats with exactly one letter between them
-	// xyx, abcdefeghi, aaa
-
-	return true
+	return containsPairWithoutOverlapping(str) && containsRepeatingLetterWithOneBetween(str)
 }
 
 func containsPairWithoutOverlapping(str string) bool {
-	for i, r := range str {
-		currentRune := string(r)
-		previousRune := ""
-		nextRune := ""
+	pairs := make(map[string]int)
 
-		if i > 0 {
-			previousRune = string(str[i-1])
+	for i := range len(str) - 1 {
+		pair := str[i : i+2]
+		if lastIndex, exists := pairs[pair]; exists {
+			if lastIndex < i-1 {
+				return true
+			}
+		} else {
+			pairs[pair] = i
 		}
+	}
+	return false
+}
 
-		if len(str) > i+1 {
-			nextRune = string(str[i+1])
+func containsRepeatingLetterWithOneBetween(str string) bool {
+	for i := range len(str) - 2 {
+		if str[i] == str[i+2] {
+			return true
 		}
-
-		fmt.Printf("Previous: %s | Current: %s | Next: %s\n", previousRune, currentRune, nextRune)
 	}
 	return false
 }
